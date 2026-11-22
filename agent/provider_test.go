@@ -7,8 +7,7 @@ import (
 	"testing"
 )
 
-// TestConnectionSendsSessionHeader: 配了会话头时，连接测试也得带上(头值非空)，
-// 否则 opencode 等网关会因缺 session id 返回 400，测试结果与实际运行不一致。
+// TestConnectionSendsSessionHeader: when a session header is configured, the connection test must also send it (with a non-empty header value); otherwise gateways like opencode return 400 for a missing session id and the test result won't match real runs.
 func TestConnectionSendsSessionHeader(t *testing.T) {
 	const hk = "X-Session-Id"
 	var got string
@@ -33,7 +32,7 @@ func TestConnectionSendsSessionHeader(t *testing.T) {
 	}
 }
 
-// TestConnectionNoSessionHeaderWhenUnset: 未填会话头时不发送任何会话头。
+// TestConnectionNoSessionHeaderWhenUnset: no session header is sent when none is configured.
 func TestConnectionNoSessionHeaderWhenUnset(t *testing.T) {
 	const hk = "X-Session-Id"
 	var got string
