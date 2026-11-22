@@ -32,7 +32,7 @@ func TestClientIPTrustedProxy(t *testing.T) {
 			want:       "203.0.113.55",
 		},
 		{
-			// 默认私网不可信（防内网客户端伪造）：10.x 直连即便带 XFF 也只认直连来源。
+			// Private networks are untrusted by default (guards against spoofing by intranet clients): a direct 10.x connection is only trusted for its direct source, even with XFF.
 			name:       "untrusted private peer ignores forged XFF (default loopback-only)",
 			remoteAddr: "10.0.0.1:43210",
 			xrealip:    "",
@@ -40,7 +40,7 @@ func TestClientIPTrustedProxy(t *testing.T) {
 			want:       "10.0.0.1",
 		},
 		{
-			// IPv6 回环反代：SplitHostPort 正确去括号，X-Real-IP 被采信。
+			// IPv6 loopback reverse proxy: SplitHostPort correctly strips brackets, and X-Real-IP is trusted.
 			name:       "trusted IPv6 loopback proxy, X-Real-IP wins",
 			remoteAddr: "[::1]:43210",
 			xrealip:    "203.0.113.88",
