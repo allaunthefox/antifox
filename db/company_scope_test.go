@@ -73,7 +73,7 @@ func TestCompanyScopeAttribution(t *testing.T) {
 		t.Fatalf("UpsertCompany: %v", err)
 	}
 	t.Cleanup(func() {
-		// 连 company + scope 一起删，避免残留规则让下次运行的唯一域名撞上旧归属。
+		// Delete the company and scope together, so leftover rules don't make the next run's unique domain collide with the old ownership.
 		_, _ = d.Exec(`DELETE FROM company_scope WHERE company_id = $1`, cid)
 		_, _ = d.Exec(`DELETE FROM companies WHERE id = $1`, cid)
 	})
