@@ -3,7 +3,7 @@ services:
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-antifox}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?请在 .env 设置 POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
       POSTGRES_DB: ${POSTGRES_DB:-antifox}
     volumes:
       - pgdata:/var/lib/postgresql/data
@@ -29,14 +29,13 @@ services:
       ANTIFOX_LLM_PROXY: ${ANTIFOX_LLM_PROXY:-}
     ports:
       - "8787:8787"
-      # 流量代理（8788）默认只绑容器内回环、不对外发布——它无客户端认证，暴露到公网会被
-      # 当作开放代理滥用。确需远程用时自行加认证 + 网络隔离后再发布。
+      # The traffic proxy (8788) is bound only to the container's loopback by default and is not published — it has no client authentication, so exposing it to the public internet would let it be abused as an open proxy. Only publish it for remote use after adding authentication + network isolation yourself.
     volumes:
-      # 把数据目录（含 jwt.key、SQLite 等）绑定到项目根目录的 data/，
-      # 方便在宿主机直接查看/备份，容器重建也不丢。
+      # Bind the data directory (including jwt.key, SQLite, etc.) to data/ at the project root,
+      # so you can inspect/back it up directly on the host, and it survives container rebuilds.
       - ./data:/app/data
-      # 把项目根目录的 skills 挂进容器（覆盖镜像内置的 /app/skills）；
-      # 改 skill 无需重建镜像，容器读的就是宿主机这份。
+      # Mount the skills directory from the project root into the container (overriding the image's built-in /app/skills);
+      # editing a skill needs no image rebuild — the container reads this copy from the host.
       - ./skills:/app/skills
     restart: unless-stopped
 
